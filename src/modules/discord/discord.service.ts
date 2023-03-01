@@ -16,7 +16,12 @@ import DiscordInteraction from 'src/domains/discord/discord-interaction';
 import DiscordMessage from 'src/domains/discord/discord-message';
 import InteractionReplyFactory from 'src/domains/discord/interaction-reply-factory';
 import MessageReplyFactory from 'src/domains/discord/message-reply-factory';
+import { DiscordInteractionMapper } from 'src/mongo/mappers/discord-interaction.mapper';
 import { DiscordMessageMapper } from 'src/mongo/mappers/discord-message.mapper';
+import {
+  DiscordInteractionDocument,
+  DiscordInteractionModel,
+} from 'src/mongo/schemas/discord-interaction.schema';
 import {
   DiscordMessageDocument,
   DiscordMessageModel,
@@ -35,6 +40,8 @@ export class DiscordService implements OnModuleInit {
     private configService: ConfigService,
     @InjectModel(DiscordMessageModel.name)
     private discordMessageModel: Model<DiscordMessageDocument>,
+    @InjectModel(DiscordInteractionModel.name)
+    private discordInteractionModel: Model<DiscordInteractionDocument>,
   ) {
     this.clientId = this.configService.get('discord.clientId');
     this.token = this.configService.get('discord.token');
@@ -77,6 +84,11 @@ export class DiscordService implements OnModuleInit {
       async (aInteraction: ChatInputCommandInteraction) => {
         const interaction = new DiscordInteraction(aInteraction);
         if (!interaction.validate()) return;
+
+        const createdDiscordInteration = new this.discordInteractionModel(
+          DiscordInteractionMapper.fromDomain(interaction),
+        );
+        await createdDiscordInteration.save();
 
         const factory = new InteractionReplyFactory(this.client);
         const reply = factory.createReply(interaction);
