@@ -1,5 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { InjectModel } from '@nestjs/mongoose';
 import {
   ChatInputCommandInteraction,
   Client,
@@ -9,12 +10,17 @@ import {
   REST,
   Routes,
 } from 'discord.js';
-import * as FastGlob from 'fast-glob';
-// import fg from 'fast-glob';
+import { Model } from 'mongoose';
+
 import DiscordInteraction from 'src/domains/discord/discord-interaction';
 import DiscordMessage from 'src/domains/discord/discord-message';
 import InteractionReplyFactory from 'src/domains/discord/interaction-reply-factory';
 import MessageReplyFactory from 'src/domains/discord/message-reply-factory';
+import { DiscordMessageMapper } from 'src/mongo/mappers/discord-message.mapper';
+import {
+  DiscordMessageDocument,
+  DiscordMessageModel,
+} from 'src/mongo/schemas/discord-message.schema';
 
 interface DiscordClient extends Client {
   commands?: Collection<any, any>;
@@ -25,7 +31,11 @@ export class DiscordService implements OnModuleInit {
   token: string;
   clientId: string;
   client: DiscordClient;
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    @InjectModel(DiscordMessageModel.name)
+    private discordMessageModel: Model<DiscordMessageDocument>,
+  ) {
     this.clientId = this.configService.get('discord.clientId');
     this.token = this.configService.get('discord.token');
     this.client = new Client({
@@ -47,9 +57,14 @@ export class DiscordService implements OnModuleInit {
     await this.loadInteractionCommand();
 
     /** 봇 태그해서 보낸 메세지 이벤트 처리 */
-    this.client.on('messageCreate', (aMessage: Message) => {
+    this.client.on('messageCreate', async (aMessage: Message) => {
       const message = new DiscordMessage(aMessage);
       if (!message.forThisBot()) return;
+
+      const createdDiscordMessage = new this.discordMessageModel(
+        DiscordMessageMapper.fromDomain(message),
+      );
+      await createdDiscordMessage.save();
 
       const factory = new MessageReplyFactory(this.client);
       const reply = factory.createReply(message);
@@ -74,7 +89,7 @@ export class DiscordService implements OnModuleInit {
 
   async loadInteractionCommand() {
     /**
-     * @TODO auto load
+     * @TODO command auto load
      */
     const commands = [
       {

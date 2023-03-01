@@ -4,4 +4,5 @@ export default () => ({
     token: process.env.DISCORD_TOKEN,
     clientId: process.env.DISCORD_CLIENT_ID,
   },
+  mongoURI: process.env.MONGO_URI,
 });

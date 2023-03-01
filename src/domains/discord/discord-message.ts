@@ -1,11 +1,11 @@
 import { Message } from 'discord.js';
 
 export default class DiscordMessage {
-  message: Message;
+  private _message: Message;
   prefix = '<@1076880268910145606>';
 
   constructor(message: Message) {
-    this.message = message;
+    this._message = message;
   }
 
   forThisBot(): boolean {
@@ -22,6 +22,10 @@ export default class DiscordMessage {
     }
 
     return true;
+  }
+
+  get message() {
+    return this._message;
   }
 
   get args(): string[] {
