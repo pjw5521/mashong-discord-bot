@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InteractionReply } from './replys/interaction-reply';
+import { InteractionReply } from './replys/interaction.reply';
 import { PingReply } from './replys/ping.reply';
 
 @Injectable()

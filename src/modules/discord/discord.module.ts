@@ -10,10 +10,14 @@ import {
   DiscordMessageModel,
   DiscordMessageSchema,
 } from 'src/mongo/schemas/discord-message.schema';
+import { InteractionModule } from '../interaction/interaction.module';
+import { DiscordClientModule } from './discord-client.module';
 import { DiscordService } from './discord.service';
 
 @Module({
   imports: [
+    DiscordClientModule,
+    InteractionModule,
     MongooseModule.forFeature([
       {
         name: DiscordMessageModel.name,
@@ -25,23 +29,6 @@ import { DiscordService } from './discord.service';
       },
     ]),
   ],
-  providers: [
-    DiscordService,
-    {
-      provide: DISCORD_CLIENT,
-      useFactory: () => {
-        const client = new Client({
-          intents: [
-            // Intent를 설정합니다. 설정하지 않으면 CLIENT_MISSING_INTENTS 오류가 발생합니다.
-            GatewayIntentBits.Guilds,
-            GatewayIntentBits.GuildMessages,
-            GatewayIntentBits.DirectMessages,
-          ],
-        });
-
-        return client;
-      },
-    },
-  ],
+  providers: [DiscordService],
 })
 export class DiscordModule {}

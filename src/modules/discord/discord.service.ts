@@ -37,8 +37,10 @@ export class DiscordService implements OnModuleInit {
   clientId: string;
   // client: DiscordClient;
   constructor(
-    private configService: ConfigService,
     @Inject(DISCORD_CLIENT) private readonly client: DiscordClient,
+    private readonly configService: ConfigService,
+    private readonly interactionReplyFactory: InteractionReplyFactory,
+
     @InjectModel(DiscordMessageModel.name)
     private discordMessageModel: Model<DiscordMessageDocument>,
     @InjectModel(DiscordInteractionModel.name)
@@ -78,13 +80,12 @@ export class DiscordService implements OnModuleInit {
         const interaction = new DiscordInteraction(aInteraction);
         if (!interaction.validate()) return;
 
-        const createdDiscordInteration = new this.discordInteractionModel(
+        const createdDiscordInteraction = new this.discordInteractionModel(
           DiscordInteractionMapper.fromDomain(interaction),
         );
-        await createdDiscordInteration.save();
+        await createdDiscordInteraction.save();
 
-        const factory = new InteractionReplyFactory(this.client);
-        const reply = factory.createReply(interaction);
+        const reply = this.interactionReplyFactory.createReply(interaction);
         reply.send();
       },
     );
