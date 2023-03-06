@@ -19,5 +19,6 @@ import { DISCORD_CLIENT } from 'src/constant/discord';
       },
     },
   ],
+  exports: [DISCORD_CLIENT]
 })
 export class DiscordClientModule {}

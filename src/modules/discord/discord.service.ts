@@ -14,7 +14,6 @@ import { DISCORD_CLIENT } from 'src/constant/discord';
 
 import DiscordInteraction from 'src/domains/discord/discord-interaction';
 import DiscordMessage from 'src/domains/discord/discord-message';
-import InteractionReplyFactory from 'src/domains/discord/interaction-reply-factory';
 import MessageReplyFactory from 'src/domains/discord/message-reply-factory';
 import { DiscordInteractionMapper } from 'src/mongo/mappers/discord-interaction.mapper';
 import { DiscordMessageMapper } from 'src/mongo/mappers/discord-message.mapper';
@@ -26,6 +25,7 @@ import {
   DiscordMessageDocument,
   DiscordMessageModel,
 } from 'src/mongo/schemas/discord-message.schema';
+import InteractionReplyFactory from "../interaction/interaction-reply-factory";
 
 interface DiscordClient extends Client {
   commands?: Collection<any, any>;
@@ -86,7 +86,7 @@ export class DiscordService implements OnModuleInit {
         await createdDiscordInteraction.save();
 
         const reply = this.interactionReplyFactory.createReply(interaction);
-        reply.send();
+        reply.send(interaction);
       },
     );
 
