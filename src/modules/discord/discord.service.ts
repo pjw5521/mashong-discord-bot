@@ -1,16 +1,16 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Inject, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   ChatInputCommandInteraction,
   Client,
   Collection,
-  GatewayIntentBits,
   Message,
   REST,
   Routes,
 } from 'discord.js';
 import { Model } from 'mongoose';
+import { DISCORD_CLIENT } from 'src/constant/discord';
 
 import DiscordInteraction from 'src/domains/discord/discord-interaction';
 import DiscordMessage from 'src/domains/discord/discord-message';
@@ -35,9 +35,10 @@ interface DiscordClient extends Client {
 export class DiscordService implements OnModuleInit {
   token: string;
   clientId: string;
-  client: DiscordClient;
+  // client: DiscordClient;
   constructor(
     private configService: ConfigService,
+    @Inject(DISCORD_CLIENT) private readonly client: DiscordClient,
     @InjectModel(DiscordMessageModel.name)
     private discordMessageModel: Model<DiscordMessageDocument>,
     @InjectModel(DiscordInteractionModel.name)
@@ -45,14 +46,6 @@ export class DiscordService implements OnModuleInit {
   ) {
     this.clientId = this.configService.get('discord.clientId');
     this.token = this.configService.get('discord.token');
-    this.client = new Client({
-      intents: [
-        // Intent를 설정합니다. 설정하지 않으면 CLIENT_MISSING_INTENTS 오류가 발생합니다.
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.DirectMessages,
-      ],
-    });
   }
 
   async onModuleInit() {
