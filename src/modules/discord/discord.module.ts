@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { Client, GatewayIntentBits } from 'discord.js';
+import { DISCORD_CLIENT } from 'src/constant/discord';
 import {
   DiscordInteractionModel,
   DiscordInteractionSchema,
@@ -23,6 +25,23 @@ import { DiscordService } from './discord.service';
       },
     ]),
   ],
-  providers: [DiscordService],
+  providers: [
+    DiscordService,
+    {
+      provide: DISCORD_CLIENT,
+      useFactory: () => {
+        const client = new Client({
+          intents: [
+            // Intent를 설정합니다. 설정하지 않으면 CLIENT_MISSING_INTENTS 오류가 발생합니다.
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.DirectMessages,
+          ],
+        });
+
+        return client;
+      },
+    },
+  ],
 })
 export class DiscordModule {}
