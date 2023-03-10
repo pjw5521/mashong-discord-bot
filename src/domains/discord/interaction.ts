@@ -1,25 +1,29 @@
-import { ChatInputCommandInteraction, Message } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 
 export default class DiscordInteraction {
-  interaction: ChatInputCommandInteraction;
+    interaction: ChatInputCommandInteraction;
 
-  constructor(interaction: ChatInputCommandInteraction) {
-    this.interaction = interaction;
-  }
-
-  validate(): boolean {
-    if (!this.interaction.isChatInputCommand()) {
-      return false;
+    constructor(interaction: ChatInputCommandInteraction) {
+        this.interaction = interaction;
     }
 
-    return true;
-  }
+    validate(): boolean {
+        if (!this.interaction.isChatInputCommand()) {
+            return false;
+        }
 
-  get commandName() {
-    return this.interaction.commandName;
-  }
+        return true;
+    }
 
-  get reply() {
-    return this.interaction.reply.bind(this.interaction);
-  }
+    get commandName() {
+        return this.interaction.commandName;
+    }
+
+    get reply() {
+        return this.interaction.reply.bind(this.interaction);
+    }
+
+    get options() {
+        return this.interaction.options;
+    }
 }
