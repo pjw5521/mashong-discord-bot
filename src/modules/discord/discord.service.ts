@@ -86,14 +86,8 @@ export class DiscordService implements OnModuleInit {
          * @TODO command auto load
          */
         const commands = [
-            {
-                name: 'ping',
-                description: 'discord Ping',
-            },
-            {
-                name: 'git-ping',
-                description: 'github Ping',
-            },
+            new SlashCommandBuilder().setName('ping').setDescription('discord Ping'),
+            new SlashCommandBuilder().setName('git-pong').setDescription('github Ping'),
         ];
 
         const rest = new REST().setToken(this.token);
