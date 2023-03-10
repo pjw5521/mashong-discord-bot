@@ -88,6 +88,15 @@ export class DiscordService implements OnModuleInit {
         const commands = [
             new SlashCommandBuilder().setName('ping').setDescription('discord Ping'),
             new SlashCommandBuilder().setName('git-pong').setDescription('github Ping'),
+            new SlashCommandBuilder()
+                .setName('git-repo-contributions')
+                .setDescription('get user git repository contributions')
+                .addStringOption((option) => {
+                    return option.setName('owner').setDescription('name of author');
+                })
+                .addStringOption((option) => {
+                    return option.setName('repo').setDescription('name of repository');
+                }),
         ];
 
         const rest = new REST().setToken(this.token);
