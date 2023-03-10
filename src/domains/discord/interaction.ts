@@ -1,5 +1,6 @@
 import { ChatInputCommandInteraction } from 'discord.js';
 
+// TODO: 상속관계로 바꾸는게 좋을 것 같다.
 export default class DiscordInteraction {
     interaction: ChatInputCommandInteraction;
 
@@ -25,5 +26,12 @@ export default class DiscordInteraction {
 
     get options() {
         return this.interaction.options;
+    }
+    async deferReply(param) {
+        return await this.interaction.deferReply(param);
+    }
+
+    async editReply(param) {
+        return await this.interaction.editReply(param);
     }
 }
