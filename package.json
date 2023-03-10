@@ -25,6 +25,7 @@
     "@nestjs/core": "^9.0.0",
     "@nestjs/mongoose": "^9.2.1",
     "@nestjs/platform-express": "^9.0.0",
+    "@octokit/rest": "^19.0.7",
     "discord.js": "^14.7.1",
     "mongoose": "^6.10.0",
     "reflect-metadata": "^0.1.13",
