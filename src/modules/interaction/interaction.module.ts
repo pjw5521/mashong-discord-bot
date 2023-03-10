@@ -5,14 +5,17 @@ import { PingReply } from './replys/ping.reply';
 import { InteractionReply } from './replys/interaction.reply';
 import { GitPingReply } from './replys/git-ping.reply';
 import { GitRepoContributionsReply } from './replys/git-repo-contributions.reply';
+import { HttpModule } from '@nestjs/axios';
+import { GptReply } from './replys/gpt.reply';
 
 @Module({
-    imports: [DiscordClientModule],
+    imports: [DiscordClientModule, HttpModule],
     providers: [
         InteractionReply,
         PingReply,
         GitPingReply,
         GitRepoContributionsReply,
+        GptReply,
         InteractionReplyFactory,
     ],
     exports: [InteractionReplyFactory],

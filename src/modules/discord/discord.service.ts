@@ -1,7 +1,15 @@
 import { Injectable, Inject, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
-import { ChatInputCommandInteraction, Client, Collection, Message, REST, Routes } from 'discord.js';
+import {
+    ChatInputCommandInteraction,
+    Client,
+    Collection,
+    Message,
+    REST,
+    Routes,
+    SlashCommandBuilder,
+} from 'discord.js';
 import { Model } from 'mongoose';
 import { DISCORD_CLIENT } from 'src/constant/discord';
 
@@ -96,6 +104,15 @@ export class DiscordService implements OnModuleInit {
                 })
                 .addStringOption((option) => {
                     return option.setName('repo').setDescription('name of repository');
+                }),
+            new SlashCommandBuilder()
+                .setName('gpt')
+                .setDescription('chatGpt Going On...')
+                .addStringOption((option) => {
+                    return option
+                        .setName('msg')
+                        .setDescription('Say what you want!')
+                        .setRequired(true);
                 }),
         ];
 

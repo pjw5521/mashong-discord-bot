@@ -3,6 +3,7 @@ import { InteractionReply } from './replys/interaction.reply';
 import { PingReply } from './replys/ping.reply';
 import { GitPingReply } from './replys/git-ping.reply';
 import { GitRepoContributionsReply } from './replys/git-repo-contributions.reply';
+import { GptReply } from './replys/gpt.reply';
 
 @Injectable()
 export default class InteractionReplyFactory {
@@ -11,6 +12,7 @@ export default class InteractionReplyFactory {
         private readonly pingReply: PingReply,
         private readonly gitPingReply: GitPingReply,
         private readonly gitRepoContributions: GitRepoContributionsReply,
+        private readonly gptReply: GptReply,
     ) {}
 
     createReply(interaction) {
@@ -21,6 +23,8 @@ export default class InteractionReplyFactory {
                 return this.gitPingReply;
             case 'git-repo-contributions':
                 return this.gitRepoContributions;
+            case 'gpt':
+                return this.gptReply;
             default:
                 return this.interactionReply;
         }
