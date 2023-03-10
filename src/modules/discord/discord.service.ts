@@ -90,6 +90,10 @@ export class DiscordService implements OnModuleInit {
                 name: 'ping',
                 description: 'discord Ping',
             },
+            {
+                name: 'git-ping',
+                description: 'github Ping',
+            },
         ];
 
         const rest = new REST().setToken(this.token);
