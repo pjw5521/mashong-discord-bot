@@ -27,7 +27,7 @@ export default class DiscordInteraction {
     get options() {
         return this.interaction.options;
     }
-    async deferReply(param) {
+    async deferReply(param?) {
         return await this.interaction.deferReply(param);
     }
 

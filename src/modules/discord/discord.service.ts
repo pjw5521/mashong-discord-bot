@@ -100,10 +100,10 @@ export class DiscordService implements OnModuleInit {
                 .setName('git-repo-contributions')
                 .setDescription('get user git repository contributions')
                 .addStringOption((option) => {
-                    return option.setName('owner').setDescription('name of author');
-                })
-                .addStringOption((option) => {
-                    return option.setName('repo').setDescription('name of repository');
+                    return option
+                        .setName('repo-url')
+                        .setDescription('name of repository')
+                        .setRequired(true);
                 }),
             new SlashCommandBuilder()
                 .setName('gpt')
