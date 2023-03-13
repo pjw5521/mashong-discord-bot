@@ -3,8 +3,7 @@ const { load } = require('cheerio');
 const { writeFileSync } = require('fs');
 
 /**
- *
- * #org-members-table > ul > li:nth-child(1) > div.py-3.css-truncate.pl-3.flex-auto
+ * @todo github 비로그인 상태면 전체 유저 가져올 수 없음
  */
 
 async function getPeopleGithubIds(page = 1) {
@@ -38,13 +37,12 @@ async function run() {
         const ids = [];
         const pageLength = 8;
 
-        for (let i = 0; i < pageLength; i++) {
-            const _ids = await getPeopleGithubIds(i + 1);
-            console.log(_ids.length);
+        for (let i = 3; i <= pageLength; i++) {
+            const _ids = await getPeopleGithubIds(i);
             ids.push(..._ids);
         }
 
-        writeFileSync('./scripts/output/ids.txt', ids.join('\n'));
+        writeFileSync('./scripts/output/sample.txt', ids.join('\n'));
     } catch (error) {
         console.log(error);
     }

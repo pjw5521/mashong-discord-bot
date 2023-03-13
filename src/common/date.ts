@@ -1,5 +1,9 @@
-import moment from 'moment';
+import * as moment from 'moment';
 
-export const now = () => {
+export const Now = () => {
     return moment();
+};
+
+export const toFormat = (date: Date, format: string) => {
+    return moment(date).format(format);
 };
