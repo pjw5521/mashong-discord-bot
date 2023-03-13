@@ -114,6 +114,9 @@ export class DiscordService implements OnModuleInit {
                         .setDescription('Say what you want!')
                         .setRequired(true);
                 }),
+            new SlashCommandBuilder()
+                .setName('rank')
+                .setDescription('Mash-Up Github Jandi Ranking'),
         ];
 
         const rest = new REST().setToken(this.token);
