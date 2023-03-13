@@ -46,7 +46,9 @@ export class RankReply {
 
         const mostCommiterIndex = this.getMostCommiterIndex(eventsByUsers);
         const mostCommiter = githubIds[mostCommiterIndex];
-        interaction.reply(mostCommiter);
+        interaction.reply(
+            `오늘 가장 많은 잔디를 심은 매쉬업 멤버는.. \`${mostCommiter}\` 입니다!!`,
+        );
     }
 
     private getMostCommiterIndex(eventsByUsers) {
