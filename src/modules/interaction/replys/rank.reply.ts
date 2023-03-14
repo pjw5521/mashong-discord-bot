@@ -1,11 +1,11 @@
 import { HttpService } from '@nestjs/axios';
-import { Inject, Injectable } from '@nestjs/common';
-import { Client, SlashCommandBuilder } from 'discord.js';
+import { Injectable } from '@nestjs/common';
+import { SlashCommandBuilder } from 'discord.js';
 import { readFileSync } from 'fs';
-import { DISCORD_CLIENT } from 'src/constant/discord';
 import { Now, toFormat } from 'src/common/date';
 import DiscordInteraction from 'src/domains/discord/interaction';
 import { SetCommand } from 'src/decorator/command.decorator';
+import { InteractionReply } from './reply';
 
 type GithubEvent = {
     id: number;
@@ -19,12 +19,8 @@ type GithubEvent = {
 };
 
 @Injectable()
-export class RankReply {
-    static base = false;
-    constructor(
-        @Inject(DISCORD_CLIENT) private readonly client: Client,
-        private readonly httpService: HttpService,
-    ) {}
+export class RankReply implements InteractionReply {
+    constructor(private readonly httpService: HttpService) {}
 
     @SetCommand()
     command() {

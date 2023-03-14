@@ -5,10 +5,10 @@ import { Octokit } from '@octokit/rest';
 import { setTimeout } from 'timers/promises';
 import DiscordInteraction from '../../../domains/discord/interaction';
 import { SetCommand } from 'src/decorator/command.decorator';
+import { InteractionReply } from './reply';
 
 @Injectable()
-export class GitRepoContributionsReply {
-    static base = false;
+export class GitRepoContributionsReply implements InteractionReply {
     private readonly MAX_ATTEMPTS = 12;
     octokit: Octokit;
     constructor(@Inject(DISCORD_CLIENT) private readonly client: Client) {
@@ -29,7 +29,7 @@ export class GitRepoContributionsReply {
             });
     }
 
-    private parseParam(interaction) {
+    private parseParam(interaction: DiscordInteraction) {
         const url = interaction.options.getString('repo-url');
         const regEx = new RegExp(
             /(https:\/\/|http:\/\/)?(github.com)\/(?<owner>[\w\.@\:/\-~]+)\/(?<repo>[\w\.@\:/\-~]+)/,

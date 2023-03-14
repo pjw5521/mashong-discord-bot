@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InteractionReply } from './replys/interaction.reply';
 import { PingReply } from './replys/ping.reply';
 import { GitPingReply } from './replys/git-ping.reply';
 import { GitRepoContributionsReply } from './replys/git-repo-contributions.reply';
@@ -9,7 +8,6 @@ import { RankReply } from './replys/rank.reply';
 @Injectable()
 export default class InteractionReplyFactory {
     constructor(
-        private readonly interactionReply: InteractionReply,
         private readonly pingReply: PingReply,
         private readonly gitPingReply: GitPingReply,
         private readonly gitRepoContributions: GitRepoContributionsReply,
@@ -29,8 +27,6 @@ export default class InteractionReplyFactory {
                 return this.gptReply;
             case 'rank':
                 return this.rankReply;
-            default:
-                return this.interactionReply;
         }
     }
 }
