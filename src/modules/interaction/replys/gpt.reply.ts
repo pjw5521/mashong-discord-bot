@@ -1,18 +1,27 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Client } from 'discord.js';
+import { Client, SlashCommandBuilder } from 'discord.js';
 import { DISCORD_CLIENT } from 'src/constant/discord';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { SetCommand } from 'src/decorator/command.decorator';
 
 @Injectable()
 export class GptReply {
     static base = false;
-    static command = 'git-ping';
-    static description: 'GitHub API Ping';
     constructor(
         @Inject(DISCORD_CLIENT) private readonly client: Client,
         private readonly httpService: HttpService,
     ) {}
+
+    @SetCommand()
+    command() {
+        return new SlashCommandBuilder()
+            .setName('gpt')
+            .setDescription('chatGpt Going On...')
+            .addStringOption((option) => {
+                return option.setName('msg').setDescription('Say what you want!').setRequired(true);
+            });
+    }
 
     async send(interaction): Promise<any> {
         const msg = interaction.options.getString('msg');
