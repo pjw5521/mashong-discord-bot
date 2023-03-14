@@ -1,15 +1,7 @@
 import { Injectable, Inject, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
-import {
-    ChatInputCommandInteraction,
-    Client,
-    Collection,
-    Message,
-    REST,
-    Routes,
-    SlashCommandBuilder,
-} from 'discord.js';
+import { ChatInputCommandInteraction, Client, Collection, Message, Routes } from 'discord.js';
 import { Model } from 'mongoose';
 import { DISCORD_CLIENT } from 'src/constant/discord';
 
@@ -34,9 +26,6 @@ interface DiscordClient extends Client {
 
 @Injectable()
 export class DiscordService implements OnModuleInit {
-    token: string;
-    clientId: string;
-    // client: DiscordClient;
     constructor(
         @Inject(DISCORD_CLIENT) private readonly client: DiscordClient,
         private readonly configService: ConfigService,
@@ -47,10 +36,7 @@ export class DiscordService implements OnModuleInit {
         private discordMessageModel: Model<DiscordMessageDocument>,
         @InjectModel(DiscordInteractionModel.name)
         private discordInteractionModel: Model<DiscordInteractionDocument>,
-    ) {
-        this.clientId = this.configService.get('discord.clientId');
-        this.token = this.configService.get('discord.token');
-    }
+    ) {}
 
     async onModuleInit() {
         /** 연결 이벤트 등록 */
@@ -85,8 +71,6 @@ export class DiscordService implements OnModuleInit {
             const reply = this.interactionReplyFactory.createReply(interaction);
             reply.send(interaction);
         });
-
-        this.client.login(this.token);
     }
 
     async loadInteractionCommand() {
@@ -119,8 +103,7 @@ export class DiscordService implements OnModuleInit {
                 .setDescription('Mash-Up Github Jandi Ranking'),
         ];
 
-        const rest = new REST().setToken(this.token);
-        await rest.put(Routes.applicationCommands(this.clientId), {
+        this.client.rest.put(Routes.applicationCommands(this.client.application.id), {
             body: commands,
         });
     }
