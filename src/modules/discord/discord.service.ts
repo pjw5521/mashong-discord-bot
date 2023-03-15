@@ -117,6 +117,15 @@ export class DiscordService implements OnModuleInit {
             new SlashCommandBuilder()
                 .setName('rank')
                 .setDescription('Mash-Up Github Jandi Ranking'),
+            new SlashCommandBuilder()
+                .setName('code')
+                .setDescription('get user git code info')
+                .addStringOption((option) => {
+                    return option
+                        .setName('user-name')
+                        .setDescription('name of user')
+                        .setRequired(true);
+                }),
         ];
 
         const rest = new REST().setToken(this.token);
