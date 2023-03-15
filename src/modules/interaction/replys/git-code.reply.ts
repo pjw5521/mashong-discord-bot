@@ -1,10 +1,13 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Client } from 'discord.js';
+import { Client, SlashCommandBuilder } from 'discord.js';
 import { DISCORD_CLIENT } from 'src/constant/discord';
 import { Octokit } from '@octokit/rest';
+import { InteractionReply } from './reply';
+import { SetCommand } from 'src/decorator/command.decorator';
+import DiscordInteraction from 'src/domains/discord/interaction';
 
 @Injectable()
-export class GitCodeReply{
+export class GitCodeReply implements InteractionReply {
     
     private readonly octokit: Octokit;
     dict = {};
@@ -12,8 +15,21 @@ export class GitCodeReply{
     constructor(@Inject(DISCORD_CLIENT) private readonly client: Client) {
         this.octokit = new Octokit();
     }
+    
+    @SetCommand()
+    command() {
+        return new SlashCommandBuilder()
+            .setName('code')
+            .setDescription('get user git code info')
+            .addStringOption((option) => {
+                return option
+                    .setName('user-name')
+                    .setDescription('name of user')
+                    .setRequired(true);
+            });
+    }
 
-    async send(interaction): Promise<any> {
+    async send(interaction : DiscordInteraction): Promise<any> {
         const id = interaction.options.getString('user-name');
 
         const res = await this.octokit.request('GET /users/{id}/repos', {
