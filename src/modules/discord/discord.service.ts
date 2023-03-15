@@ -41,7 +41,7 @@ export class DiscordService implements OnModuleInit {
         private discordMessageModel: Model<DiscordMessageDocument>,
         @InjectModel(DiscordInteractionModel.name)
         private discordInteractionModel: Model<DiscordInteractionDocument>,
-    ) {}
+    ) { }
 
     async onModuleInit() {
         /** 연결 이벤트 등록 */

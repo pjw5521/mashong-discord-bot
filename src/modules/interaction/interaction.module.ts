@@ -7,6 +7,7 @@ import { GitRepoContributionsReply } from './replys/git-repo-contributions.reply
 import { HttpModule } from '@nestjs/axios';
 import { GptReply } from './replys/gpt.reply';
 import { RankReply } from './replys/rank.reply';
+import { GitCodeReply } from './replys/git-code.reply';
 
 @Module({
     imports: [DiscordClientModule, HttpModule],
@@ -17,6 +18,7 @@ import { RankReply } from './replys/rank.reply';
         GptReply,
         RankReply,
         InteractionReplyFactory,
+        GitCodeReply
     ],
     exports: [InteractionReplyFactory],
 })

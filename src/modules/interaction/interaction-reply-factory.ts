@@ -13,7 +13,7 @@ export default class InteractionReplyFactory {
         private readonly gitRepoContributions: GitRepoContributionsReply,
         private readonly gptReply: GptReply,
         private readonly rankReply: RankReply,
-    ) {}
+    ) { }
 
     createReply(interaction) {
         switch (interaction.commandName) {
