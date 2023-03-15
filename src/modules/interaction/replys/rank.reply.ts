@@ -1,10 +1,11 @@
 import { HttpService } from '@nestjs/axios';
-import { Inject, Injectable } from '@nestjs/common';
-import { Client } from 'discord.js';
+import { Injectable } from '@nestjs/common';
+import { SlashCommandBuilder } from 'discord.js';
 import { readFileSync } from 'fs';
-import { DISCORD_CLIENT } from 'src/constant/discord';
 import { Now, toFormat } from 'src/common/date';
 import DiscordInteraction from 'src/domains/discord/interaction';
+import { SetCommand } from 'src/decorator/command.decorator';
+import { InteractionReply } from './reply';
 
 type GithubEvent = {
     id: number;
@@ -18,14 +19,16 @@ type GithubEvent = {
 };
 
 @Injectable()
-export class RankReply {
-    static base = false;
-    static command = 'rank';
-    static description: 'Mash-Up Github Jandi Ranking';
-    constructor(
-        @Inject(DISCORD_CLIENT) private readonly client: Client,
-        private readonly httpService: HttpService,
-    ) {}
+export class RankReply implements InteractionReply {
+    constructor(private readonly httpService: HttpService) {}
+
+    @SetCommand()
+    command() {
+        return new SlashCommandBuilder()
+            .setName('rank')
+            .setDescription('Mash-Up Github Jandi Ranking');
+    }
+
     async send(interaction: DiscordInteraction) {
         /**
          * @todo db에 저장해서 읽어오도록 바꾸기

@@ -1,15 +1,14 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Client } from 'discord.js';
+import { Client, SlashCommandBuilder } from 'discord.js';
 import { DISCORD_CLIENT } from 'src/constant/discord';
 import { Octokit } from '@octokit/rest';
 import { setTimeout } from 'timers/promises';
 import DiscordInteraction from '../../../domains/discord/interaction';
+import { SetCommand } from 'src/decorator/command.decorator';
+import { InteractionReply } from './reply';
 
 @Injectable()
-export class GitRepoContributionsReply {
-    static base = false;
-    static command = 'git-ping';
-    static description: 'GitHub API Ping';
+export class GitRepoContributionsReply implements InteractionReply {
     private readonly MAX_ATTEMPTS = 12;
     octokit: Octokit;
     constructor(@Inject(DISCORD_CLIENT) private readonly client: Client) {
@@ -17,7 +16,20 @@ export class GitRepoContributionsReply {
         this.octokit = new Octokit();
     }
 
-    private parseParam(interaction) {
+    @SetCommand()
+    command() {
+        return new SlashCommandBuilder()
+            .setName('git-repo-contributions')
+            .setDescription('get user git repository contributions')
+            .addStringOption((option) => {
+                return option
+                    .setName('repo-url')
+                    .setDescription('name of repository')
+                    .setRequired(true);
+            });
+    }
+
+    private parseParam(interaction: DiscordInteraction) {
         const url = interaction.options.getString('repo-url');
         const regEx = new RegExp(
             /(https:\/\/|http:\/\/)?(github.com)\/(?<owner>[\w\.@\:/\-~]+)\/(?<repo>[\w\.@\:/\-~]+)/,

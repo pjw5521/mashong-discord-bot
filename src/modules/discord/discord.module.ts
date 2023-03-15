@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { DiscoveryModule } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
     DiscordInteractionModel,
@@ -15,6 +16,7 @@ import { DiscordService } from './discord.service';
 
 @Module({
     imports: [
+        DiscoveryModule,
         DiscordClientModule,
         MessageModule,
         InteractionModule,
