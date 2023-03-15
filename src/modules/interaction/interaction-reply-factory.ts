@@ -1,36 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { PingReply } from './replys/ping.reply';
-import { GitPingReply } from './replys/git-ping.reply';
-import { GitRepoContributionsReply } from './replys/git-repo-contributions.reply';
-import { GptReply } from './replys/gpt.reply';
-import { RankReply } from './replys/rank.reply';
-import { GitCodeReply } from './replys/git-code.reply';
+import { DiscoveryService, MetadataScanner, Reflector } from '@nestjs/core';
+import { COMMAND } from 'src/decorator/command.decorator';
+import DiscordInteraction from 'src/domains/discord/interaction';
 
 @Injectable()
 export default class InteractionReplyFactory {
     constructor(
-        private readonly pingReply: PingReply,
-        private readonly gitPingReply: GitPingReply,
-        private readonly gitRepoContributions: GitRepoContributionsReply,
-        private readonly gptReply: GptReply,
-        private readonly rankReply: RankReply,
-        private readonly gitCodeReply: GitCodeReply
-    ) { }
+        private readonly discoveryService: DiscoveryService,
+        private readonly metadataScanner: MetadataScanner,
+        private readonly reflector: Reflector,
+    ) {}
 
-    createReply(interaction) {
-        switch (interaction.commandName) {
-            case 'ping':
-                return this.pingReply;
-            case 'git-ping':
-                return this.gitPingReply;
-            case 'git-repo-contributions':
-                return this.gitRepoContributions;
-            case 'gpt':
-                return this.gptReply;
-            case 'git-code':
-                return this.gitCodeReply;
-            case 'rank':
-                return this.rankReply;
-        }
+    createReply(interaction: DiscordInteraction) {
+        const providers = this.discoveryService.getProviders();
+
+        const replyInstance = providers
+            .filter((wrapper) => wrapper.isDependencyTreeStatic())
+            .filter(({ instance }) => instance && Object.getPrototypeOf(instance))
+            .reduce((targetReplyInstance, { instance }) => {
+                if (targetReplyInstance) return targetReplyInstance;
+
+                const prototype = Object.getPrototypeOf(instance);
+                const methods = this.metadataScanner.getAllMethodNames(prototype);
+                const command = this.reflector.get(COMMAND, prototype);
+
+                if (methods.includes('command') && command?.name === interaction.commandName) {
+                    return instance;
+                }
+                return null;
+            }, null);
+
+        return replyInstance;
     }
 }

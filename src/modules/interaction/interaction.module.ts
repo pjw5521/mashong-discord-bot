@@ -8,9 +8,10 @@ import { HttpModule } from '@nestjs/axios';
 import { GptReply } from './replys/gpt.reply';
 import { RankReply } from './replys/rank.reply';
 import { GitCodeReply } from './replys/git-code.reply';
+import { DiscoveryModule } from '@nestjs/core';
 
 @Module({
-    imports: [DiscordClientModule, HttpModule],
+    imports: [DiscordClientModule, HttpModule, DiscoveryModule],
     providers: [
         PingReply,
         GitPingReply,
@@ -18,7 +19,7 @@ import { GitCodeReply } from './replys/git-code.reply';
         GptReply,
         RankReply,
         InteractionReplyFactory,
-        GitCodeReply
+        GitCodeReply,
     ],
     exports: [InteractionReplyFactory],
 })
