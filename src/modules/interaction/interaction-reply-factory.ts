@@ -1,35 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner, Reflector } from '@nestjs/core';
 import { COMMAND } from 'src/decorator/command.decorator';
 import DiscordInteraction from 'src/domains/discord/interaction';
+import { InteractionReply } from './replys/reply';
 
 @Injectable()
-export default class InteractionReplyFactory {
+export default class InteractionReplyFactory implements OnModuleInit {
+    commandReplyMap: Map<string, InteractionReply>;
     constructor(
         private readonly discoveryService: DiscoveryService,
         private readonly metadataScanner: MetadataScanner,
         private readonly reflector: Reflector,
     ) {}
 
+    onModuleInit() {
+        this.commandReplyMap = this.initCommandReplyMap();
+    }
+
     createReply(interaction: DiscordInteraction) {
+        return this.commandReplyMap.get(interaction.commandName);
+    }
+
+    initCommandReplyMap() {
+        const map = new Map();
         const providers = this.discoveryService.getProviders();
 
-        const replyInstance = providers
+        providers
             .filter((wrapper) => wrapper.isDependencyTreeStatic())
             .filter(({ instance }) => instance && Object.getPrototypeOf(instance))
-            .reduce((targetReplyInstance, { instance }) => {
-                if (targetReplyInstance) return targetReplyInstance;
-
+            .forEach(({ instance }) => {
                 const prototype = Object.getPrototypeOf(instance);
                 const methods = this.metadataScanner.getAllMethodNames(prototype);
                 const command = this.reflector.get(COMMAND, prototype);
 
-                if (methods.includes('command') && command?.name === interaction.commandName) {
-                    return instance;
+                if (methods.includes('command') && command) {
+                    map.set(command.name, instance);
                 }
-                return null;
-            }, null);
+            });
 
-        return replyInstance;
+        return map;
     }
 }
