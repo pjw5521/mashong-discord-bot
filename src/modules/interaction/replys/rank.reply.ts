@@ -6,6 +6,7 @@ import { Now, toFormat } from 'src/common/date';
 import DiscordInteraction from 'src/domains/discord/interaction';
 import { SetCommand } from 'src/decorator/command.decorator';
 import { InteractionReply } from './reply';
+import { ConfigService } from '@nestjs/config';
 
 type GithubEvent = {
     id: number;
@@ -20,7 +21,10 @@ type GithubEvent = {
 
 @Injectable()
 export class RankReply implements InteractionReply {
-    constructor(private readonly httpService: HttpService) {}
+    constructor(
+        private readonly httpService: HttpService,
+        private readonly configService: ConfigService,
+    ) {}
 
     @SetCommand()
     command() {
@@ -41,6 +45,11 @@ export class RankReply implements InteractionReply {
             githubIds.map(async (githubId) => {
                 const response = await this.httpService.axiosRef.get(
                     `https://api.github.com/users/${githubId}/events?page=1`,
+                    {
+                        headers: {
+                            Authorization: `token ${this.configService.get('githubToken')}`,
+                        },
+                    },
                 );
 
                 return response.data;
