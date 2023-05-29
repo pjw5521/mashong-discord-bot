@@ -39,7 +39,7 @@ jobs:
         
       # zip 파일 생성
       - name : zip create
-        run : zip -qq -r /$GITHUB_SHA.zip .
+        run : zip -qq -r build.zip .
         shell : bash 
       
       # with에 secrets에서 설정한 key를 설정한다. 
@@ -56,11 +56,11 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
+          aws s3 cp --region ap-northeast-2 build.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
       
       - name: Deploy
         run: aws deploy create-deployment
           --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} 
           --deployment-config-name CodeDeployDefault.AllAtOnce
           --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
-          --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip
+          --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=build.zip
