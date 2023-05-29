@@ -1,0 +1,21 @@
+#appspec.yml
+
+version: 0.0
+os: linux 
+
+files:
+  - source: / # 인스턴스에 복사할 source 디렉터리 or 파일
+    destination: /home/ubuntu/github_action # 인스턴스의 destination 경로
+    overwrite: yes # overwrite 여부
+
+permissions: # pemission 설정 destination 파일에 owner,group,mode를 지정한다. 
+  - object: /
+    pattern: '**'
+    owner: ubuntu
+    group: ubuntu
+    
+hooks: # 각 라이프 사이클에 실행할 동작
+  AfterInstall:
+    - location: deploy.sh # location에 설정한 파일을 afterInstall event에서 실행한다.
+      timeout: 300
+      runas: ubuntu
